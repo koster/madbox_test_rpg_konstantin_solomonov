@@ -9,7 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 297763066410921876}
-  m_Layer: 0
+  - component: {fileID: 715259703}
+  - component: {fileID: 715259702}
+  m_Layer: 7
   m_Name: Bee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,6 +33,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &715259703
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1358921057130329688}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.45
+  m_Center: {x: 0, y: 0.73, z: 0}
+--- !u!114 &715259702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1358921057130329688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca85b82a57b934245880a0fe3cb2e0da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6926839794863368101
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,7 +67,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012741}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: wingrl2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +97,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012743}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: wing_r1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +127,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012745}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: wing_l2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +157,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012747}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: wing_l1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +187,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012749}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012751}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +250,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012753}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,7 +286,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012755}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -290,7 +317,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6926839794863012757}
   - component: {fileID: 6926839794849704639}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Beez
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -384,7 +411,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6926839794863012759}
   - component: {fileID: 6926839794853975167}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Bee
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -435,7 +462,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012761}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: antenna_l4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -449,7 +476,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6926839794863368121}
-  m_LocalRotation: {x: -9.086758e-17, y: -1.8133923e-17, z: -4.4518434e-17, w: 1}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.019, y: -0.055, z: -0.022499999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -465,7 +492,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012763}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: antenna_l3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -496,7 +523,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012765}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: antenna_l2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,7 +537,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6926839794863368125}
-  m_LocalRotation: {x: -9.086758e-17, y: -1.8133923e-17, z: -4.4518434e-17, w: 1}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.019, y: 0.055, z: 0.022499999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -526,7 +553,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6926839794863012767}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: antenna_l1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
