@@ -1,20 +1,24 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-    public float speed = 5f;
+    public float moveSpeed = 5f;
+    public float attackRange = 1f;
+    public float attackRate = 1f;
+    
     public float sensitivity = 0.5f;
     public float motionDamping = 0.9f;
     public float rotationDamping = 0.25f;
 
-    public float attackRange = 1f;
-    public float attackRate = 1f;
-    
+    public List<Weapon> startingWeapons = new List<Weapon>();
+
+    public Transform weaponSlot;
+
+    Weapon equippedWeapon;
+
     float attackCooldown;
-    
-    public float radius = 0;
+
     Vector3 origin;
     bool input;
     Vector3 moveVector;
@@ -26,11 +30,22 @@ public class Hero : MonoBehaviour
 
     void Start()
     {
+        var range = Random.Range(0, startingWeapons.Count);
+        var startingWeapon = startingWeapons[range];
+        Equip(startingWeapon);
+
         animator = GetComponentInChildren<Animator>();
+
         animationEvents = GetComponentInChildren<HeroAnimationEvents>();
         animationEvents.HitDamage += HitAnimation;
-        
+
         InvokeRepeating(nameof(SlowTick), 0f, 1 / 10f);
+    }
+
+    public void Equip(Weapon weapon)
+    {
+        equippedWeapon = Instantiate(weapon, Vector3.zero, Quaternion.identity);
+        equippedWeapon.transform.SetParent(weaponSlot, false);
     }
 
     void OnDestroy()
@@ -42,7 +57,7 @@ public class Hero : MonoBehaviour
     {
         if (attackTarget == null)
             return;
-        
+
         Destroy(attackTarget.gameObject);
     }
 
@@ -55,20 +70,20 @@ public class Hero : MonoBehaviour
         {
             if (enemy == null)
                 break;
-            
+
             if (closest == null)
                 closest = enemy;
-            else if (IsCloserToMeThan(closest, enemy))
+            else if (IsCloserToMeThan(closest.transform, enemy.transform))
                 closest = enemy;
         }
 
         attackTarget = closest;
     }
 
-    bool IsCloserToMeThan(Collider clsst, Collider enemy)
+    bool IsCloserToMeThan(Transform clsst, Transform enemy)
     {
-        return Vector3.Distance(clsst.transform.position, transform.position) <
-               Vector3.Distance(enemy.transform.position, transform.position);
+        return Vector3.Distance(clsst.position, transform.position) <
+               Vector3.Distance(enemy.position, transform.position);
     }
 
     void Update()
@@ -83,14 +98,14 @@ public class Hero : MonoBehaviour
         {
             input = false;
         }
-        
+
         animator.SetFloat("MoveInput", moveVector.magnitude);
     }
 
     void FixedUpdate()
     {
         attackCooldown -= Time.fixedDeltaTime;
-        
+
         if (input)
         {
             var axis = origin - Input.mousePosition;
@@ -112,11 +127,12 @@ public class Hero : MonoBehaviour
             }
         }
 
-        transform.position += moveVector * Time.fixedDeltaTime * speed;
+        var finalMoveSpeed = moveSpeed * equippedWeapon.movementSpeedModifier;
+        transform.position += moveVector * Time.fixedDeltaTime * finalMoveSpeed;
 
         if (attackTarget != null)
         {
-            var faceTarget = transform.position-attackTarget.transform.position;
+            var faceTarget = transform.position - attackTarget.transform.position;
             faceTarget.y = 0;
             transform.forward = Vector3.Lerp(transform.forward, faceTarget, rotationDamping);
         }
@@ -130,7 +146,8 @@ public class Hero : MonoBehaviour
 
     void AttackOnce()
     {
-        attackCooldown = 1f / attackRate;
+        var finalAttackRate = attackRate * equippedWeapon.attackSpeedModifier;
+        attackCooldown = 1f / finalAttackRate;
         animator.SetTrigger("Hit");
     }
 
@@ -140,9 +157,14 @@ public class Hero : MonoBehaviour
     {
         for (var i = 0; i < collider.Length; i++)
             collider[i] = null;
-        
-        Physics.OverlapSphereNonAlloc(transform.position, attackRange, collider, LayerMask.GetMask("Enemy"));
+
+        Physics.OverlapSphereNonAlloc(transform.position, CalculateAttackRange(), collider, LayerMask.GetMask("Enemy"));
         return collider;
+    }
+
+    float CalculateAttackRange()
+    {
+        return attackRange * equippedWeapon.attackRadiusModifier;
     }
 
     void OnDrawGizmos()
