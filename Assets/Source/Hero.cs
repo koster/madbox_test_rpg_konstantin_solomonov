@@ -7,8 +7,6 @@ public class Hero : MonoBehaviour
     public float attackRange = 1f;
     public float attackRate = 1f;
 
-    public float sensitivity = 0.5f;
-    public float motionDamping = 0.9f;
     public float rotationDamping = 0.25f;
 
     public List<Weapon> startingWeapons = new List<Weapon>();
@@ -21,10 +19,8 @@ public class Hero : MonoBehaviour
 
     float attackCooldown;
 
-    Vector3 origin;
-    bool input;
-    Vector3 moveVector;
-
+    JoystickInput joystick;
+    
     Animator animator;
     HeroAnimationEvents animationEvents;
 
@@ -32,12 +28,13 @@ public class Hero : MonoBehaviour
 
     void Start()
     {
+        joystick = Main.Get<JoystickInput>();
+        
         var range = Random.Range(0, startingWeapons.Count);
         var startingWeapon = startingWeapons[range];
         Equip(startingWeapon);
 
         animator = GetComponentInChildren<Animator>();
-
 
         animationEvents = GetComponentInChildren<HeroAnimationEvents>();
         animationEvents.HitDamage += HitAnimation;
@@ -91,39 +88,18 @@ public class Hero : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            input = true;
-            origin = Input.mousePosition;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            input = false;
-        }
-
         var desiredAttackDuration = 1f / CalculateAttackRate();
         animator.SetFloat("MoveSpeedMul", desiredAttackDuration / attackAnimation.length);
         animator.SetFloat("AttackSpeedMul", 1f + (equippedWeapon.attackSpeedModifier - 1f) / 4f);
-        animator.SetFloat("MoveInput", moveVector.magnitude);
+        animator.SetFloat("MoveInput", joystick.GetMoveVector().magnitude);
     }
 
     void FixedUpdate()
     {
         attackCooldown -= Time.fixedDeltaTime;
 
-        if (input)
+        if(!joystick.IsDown())
         {
-            var axis = origin - Input.mousePosition;
-            axis = Vector3.ClampMagnitude(axis * sensitivity, 1f);
-            axis = new Vector3(axis.x, 0, axis.y);
-
-            moveVector = Vector3.Lerp(moveVector, axis, motionDamping);
-        }
-        else
-        {
-            moveVector *= motionDamping;
-
             if (attackTarget != null)
             {
                 if (attackCooldown < 0)
@@ -133,6 +109,7 @@ public class Hero : MonoBehaviour
             }
         }
 
+        var moveVector = joystick.GetMoveVector();
         transform.position += moveVector * Time.fixedDeltaTime * CalculateMoveSpeed();
 
         if (attackTarget != null)
