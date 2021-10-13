@@ -20,7 +20,7 @@ public class Hero : MonoBehaviour
     float attackCooldown;
 
     JoystickInput joystick;
-    
+
     Animator animator;
     HeroAnimationEvents animationEvents;
 
@@ -29,7 +29,7 @@ public class Hero : MonoBehaviour
     void Start()
     {
         joystick = Main.Get<JoystickInput>();
-        
+
         var range = Random.Range(0, startingWeapons.Count);
         var startingWeapon = startingWeapons[range];
         Equip(startingWeapon);
@@ -89,8 +89,8 @@ public class Hero : MonoBehaviour
     void Update()
     {
         var desiredAttackDuration = 1f / CalculateAttackRate();
-        animator.SetFloat("MoveSpeedMul", desiredAttackDuration / attackAnimation.length);
-        animator.SetFloat("AttackSpeedMul", 1f + (equippedWeapon.attackSpeedModifier - 1f) / 4f);
+        animator.SetFloat("AttackSpeedMul", attackAnimation.length / desiredAttackDuration);
+        animator.SetFloat("MoveSpeedMul", 1f + (equippedWeapon.movementSpeedModifier - 1f) / 4f);
         animator.SetFloat("MoveInput", joystick.GetMoveVector().magnitude);
     }
 
@@ -98,15 +98,23 @@ public class Hero : MonoBehaviour
     {
         attackCooldown -= Time.fixedDeltaTime;
 
-        if(!joystick.IsDown())
+        if (!joystick.IsDown())
         {
             if (attackTarget != null)
             {
                 if (attackCooldown < 0)
                 {
-                    AttackOnce();
+                    Attacking();
                 }
             }
+            else
+            {
+                NotAttacking();
+            }
+        }
+        else
+        {
+            NotAttacking();
         }
 
         var moveVector = joystick.GetMoveVector();
@@ -126,10 +134,15 @@ public class Hero : MonoBehaviour
         }
     }
 
-    void AttackOnce()
+    void Attacking()
     {
         attackCooldown = 1f / CalculateAttackRate();
-        animator.SetTrigger("Hit");
+        animator.SetBool("Hit", true);
+    }
+
+    void NotAttacking()
+    {
+        animator.SetBool("Hit", false);
     }
 
     Collider[] collider = new Collider[32];
