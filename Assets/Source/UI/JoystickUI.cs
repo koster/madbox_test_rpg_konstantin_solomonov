@@ -6,13 +6,15 @@ public class JoystickUI : MonoBehaviour
     public CanvasGroup canvasGroup;
     public float radiusPX = 100f;
 
+    Vector3 originPoint;
     JoystickInput joystick;
 
     void Start()
     {
+        originPoint = transform.position;
         joystick = Main.Get<JoystickInput>();
         canvasGroup = GetComponent<CanvasGroup>();
-        canvasGroup.alpha = 0;
+        canvasGroup.alpha = 0.5f;
     }
 
     void FixedUpdate()
@@ -27,12 +29,11 @@ public class JoystickUI : MonoBehaviour
             rectTrans.anchoredPosition = position;
 
             innerStick.localPosition = Vector3.Lerp(innerStick.localPosition, -joystick.GetRawVector() * radiusPX, 0.9f);
-            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 1f, 0.1f);
         }
         else
         {
-            innerStick.localPosition = Vector3.Lerp(innerStick.localPosition, Vector3.zero, 0.1f);
-            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 0f, 0.1f);
+            transform.position = originPoint;
+            innerStick.localPosition = Vector3.zero;
         }
     }
 }
