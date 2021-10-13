@@ -6,8 +6,13 @@ public class EnemySpawnedEvent : UnityEvent<Enemy>
 {
 }
 
+[System.Serializable]
+public class DamageDealtEvent : UnityEvent<Vector3, int>
+{
+}
+
 public class GameEvents : GameService
 {
     public EnemySpawnedEvent EnemySpawned;
-    public event UnityAction<Vector3, int> DamageDealt;
+    public DamageDealtEvent DamageDealt;
 }

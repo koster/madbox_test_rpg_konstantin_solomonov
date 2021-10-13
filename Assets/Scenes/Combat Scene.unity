@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: 837508409}
   - component: {fileID: 837508406}
   - component: {fileID: 837508408}
+  - component: {fileID: 837508410}
   - component: {fileID: 837508407}
   m_Layer: 0
   m_Name: Main
@@ -515,6 +516,22 @@ MonoBehaviour:
   EnemySpawned:
     m_PersistentCalls:
       m_Calls: []
+  DamageDealt:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &837508410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837508403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b72d1da2b649114380adb974b530a51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floatingTextDamage: {fileID: 1013318446617578302, guid: e3358213a49747846a79faf1fdc31c1c, type: 3}
 --- !u!1 &1244021808
 GameObject:
   m_ObjectHideFlags: 0

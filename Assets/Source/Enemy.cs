@@ -20,6 +20,9 @@ public class Enemy : MonoBehaviour
     public void Hurt(int damage)
     {
         health -= damage;
+        
+        var damagePoint = transform.position + Vector3.up * height / 2f;
+        Main.Get<GameEvents>().DamageDealt?.Invoke(damagePoint, damage);
 
         if (health <= 0)
         {
