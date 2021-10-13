@@ -6,7 +6,7 @@ public class Hero : MonoBehaviour
     public float moveSpeed = 5f;
     public float attackRange = 1f;
     public float attackRate = 1f;
-    
+
     public float sensitivity = 0.5f;
     public float motionDamping = 0.9f;
     public float rotationDamping = 0.25f;
@@ -14,6 +14,8 @@ public class Hero : MonoBehaviour
     public List<Weapon> startingWeapons = new List<Weapon>();
 
     public Transform weaponSlot;
+
+    public AnimationClip attackAnimation;
 
     Weapon equippedWeapon;
 
@@ -35,6 +37,7 @@ public class Hero : MonoBehaviour
         Equip(startingWeapon);
 
         animator = GetComponentInChildren<Animator>();
+
 
         animationEvents = GetComponentInChildren<HeroAnimationEvents>();
         animationEvents.HitDamage += HitAnimation;
@@ -99,6 +102,9 @@ public class Hero : MonoBehaviour
             input = false;
         }
 
+        var desiredAttackDuration = 1f / CalculateAttackRate();
+        animator.SetFloat("MoveSpeedMul", desiredAttackDuration / attackAnimation.length);
+        animator.SetFloat("AttackSpeedMul", 1f + (equippedWeapon.attackSpeedModifier - 1f) / 4f);
         animator.SetFloat("MoveInput", moveVector.magnitude);
     }
 
@@ -127,8 +133,7 @@ public class Hero : MonoBehaviour
             }
         }
 
-        var finalMoveSpeed = moveSpeed * equippedWeapon.movementSpeedModifier;
-        transform.position += moveVector * Time.fixedDeltaTime * finalMoveSpeed;
+        transform.position += moveVector * Time.fixedDeltaTime * CalculateMoveSpeed();
 
         if (attackTarget != null)
         {
@@ -146,8 +151,7 @@ public class Hero : MonoBehaviour
 
     void AttackOnce()
     {
-        var finalAttackRate = attackRate * equippedWeapon.attackSpeedModifier;
-        attackCooldown = 1f / finalAttackRate;
+        attackCooldown = 1f / CalculateAttackRate();
         animator.SetTrigger("Hit");
     }
 
@@ -165,6 +169,16 @@ public class Hero : MonoBehaviour
     float CalculateAttackRange()
     {
         return attackRange * equippedWeapon.attackRadiusModifier;
+    }
+
+    float CalculateMoveSpeed()
+    {
+        return moveSpeed * equippedWeapon.movementSpeedModifier;
+    }
+
+    float CalculateAttackRate()
+    {
+        return attackRate * equippedWeapon.attackSpeedModifier;
     }
 
     void OnDrawGizmos()
