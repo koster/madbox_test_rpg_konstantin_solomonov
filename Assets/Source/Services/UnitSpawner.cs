@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitSpawner : MonoBehaviour
+public class UnitSpawner : GameService
 {
     public List<GameObject> enemies;
     public int count = 10;
@@ -9,7 +9,7 @@ public class UnitSpawner : MonoBehaviour
     public float width;
     public float height;
 
-    void Start()
+    public override void GameStarted()
     {
         for (var i = 0; i < count; i++)
         {
@@ -20,6 +20,8 @@ public class UnitSpawner : MonoBehaviour
                 0,
                 Random.Range(-height / 2f, height / 2f)
             );
+
+            Main.Get<GameEvents>().EnemySpawned.Invoke(instance.GetComponent<Enemy>());
         }
     }
 

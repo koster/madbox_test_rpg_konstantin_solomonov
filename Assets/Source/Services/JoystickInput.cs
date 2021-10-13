@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class JoystickInput : MonoBehaviour
+public class JoystickInput : GameService
 {
     public float sensitivity = 0.01f;
     public float motionDamping = 0.9f;

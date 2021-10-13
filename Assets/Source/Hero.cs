@@ -58,7 +58,8 @@ public class Hero : MonoBehaviour
         if (attackTarget == null)
             return;
 
-        Destroy(attackTarget.gameObject);
+        var enemy = attackTarget.GetComponent<Enemy>();
+        enemy.Hurt(equippedWeapon.damage);
     }
 
     void SlowTick()

@@ -97,3 +97,4 @@ MonoBehaviour:
   attackSpeedModifier: 4
   movementSpeedModifier: 2
   attackRadiusModifier: 1
+  damage: 15

@@ -16,4 +16,15 @@ public class Main : MonoBehaviour
 
         SceneManager.LoadScene("UI Scene", LoadSceneMode.Additive);
     }
+
+    void Start()
+    {
+        var services = GetComponents<GameService>();
+
+        foreach (var service in services)
+            service.Init();
+        
+        foreach (var service in services)
+            service.GameStarted();
+    }
 }
