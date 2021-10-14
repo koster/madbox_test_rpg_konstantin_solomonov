@@ -25,7 +25,12 @@ public class Player : GameService
         ChangeWeapon(startingWeapon);
     }
 
-    void ChangeWeapon(Weapon to)
+    public Vector3 GetPosition()
+    {
+        return unit.transform.position;
+    }
+
+    public void ChangeWeapon(Weapon to)
     {
         unit.Equip(to);
         Main.Get<GameEvents>().PlayerWeaponChanged?.Invoke(to);

@@ -594,6 +594,7 @@ GameObject:
   - component: {fileID: 837508408}
   - component: {fileID: 837508410}
   - component: {fileID: 837508407}
+  - component: {fileID: 837508412}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -692,6 +693,12 @@ MonoBehaviour:
   PlayerWeaponChanged:
     m_PersistentCalls:
       m_Calls: []
+  EnemyKilled:
+    m_PersistentCalls:
+      m_Calls: []
+  LootPickedUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &837508410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -721,8 +728,24 @@ MonoBehaviour:
   cinemachine: {fileID: 104881684}
   startingWeapons:
   - {fileID: -4313729535623201316, guid: bac79aa2a0057e5429a664d3f336da3d, type: 3}
-  - {fileID: 182007167353829114, guid: 17cf6e9fc28f3a544bc062d510f66f4a, type: 3}
+--- !u!114 &837508412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837508403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab6b21046d1a0b24c83707ac37c5856c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lootObject: {fileID: 600933873873631390, guid: d9a1943be8f74d0458207fe9be2c871d, type: 3}
+  lootOptions:
+  - {fileID: -4313729535623201316, guid: bac79aa2a0057e5429a664d3f336da3d, type: 3}
   - {fileID: -7638288353668623496, guid: 4d0814cafad460246890ec829fa7071d, type: 3}
+  - {fileID: 182007167353829114, guid: 17cf6e9fc28f3a544bc062d510f66f4a, type: 3}
+  lootChance: 0.1
 --- !u!1 &853964546
 GameObject:
   m_ObjectHideFlags: 0

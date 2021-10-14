@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
+            Main.Get<GameEvents>().EnemyKilled?.Invoke(this);
             Destroy(gameObject);
         }
     }
