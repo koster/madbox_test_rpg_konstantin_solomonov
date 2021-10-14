@@ -9,10 +9,10 @@ public class Player : GameService
 
     public List<Weapon> startingWeapons = new List<Weapon>();
 
-    List<Weapon> weaponsInventory = new List<Weapon>();
-
     JoystickInput joystick;
     Unit unit;
+
+    List<Weapon> weaponsInventory = new List<Weapon>();
     int selectedWeapon;
 
     public override void Init()

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -20,7 +19,7 @@ public class Unit : MonoBehaviour
     Animator animator;
     UnitAnimationEvents animationEvents;
 
-    Collider attackTarget;
+    Enemy attackTarget;
     Vector3 moveDirection;
 
     void Start()
@@ -51,8 +50,7 @@ public class Unit : MonoBehaviour
         if (attackTarget == null)
             return;
 
-        var enemy = attackTarget.GetComponent<Enemy>();
-        enemy.Hurt(equippedWeapon.damage);
+        attackTarget.Hurt(equippedWeapon.damage);
     }
 
     void SlowTick()
@@ -71,7 +69,7 @@ public class Unit : MonoBehaviour
                 closest = enemy;
         }
 
-        attackTarget = closest;
+        attackTarget = closest?.GetComponent<Enemy>();
     }
 
     bool IsCloserToMeThan(Transform clsst, Transform enemy)
@@ -94,7 +92,7 @@ public class Unit : MonoBehaviour
 
         if (!Main.Get<JoystickInput>().IsDown())
         {
-            if (attackTarget != null)
+            if (IsValidTarget(attackTarget))
             {
                 if (attackCooldown < 0)
                 {
@@ -113,7 +111,7 @@ public class Unit : MonoBehaviour
 
         transform.position += moveDirection * Time.fixedDeltaTime * CalculateMoveSpeed();
 
-        if (attackTarget != null)
+        if (IsValidTarget(attackTarget))
         {
             var faceTarget = transform.position - attackTarget.transform.position;
             faceTarget.y = 0;
@@ -125,6 +123,11 @@ public class Unit : MonoBehaviour
             if (moveDirection.magnitude > rotationThreshold)
                 transform.forward = Vector3.Lerp(transform.forward, -moveDirection.normalized, rotationDamping);
         }
+    }
+
+    bool IsValidTarget(Enemy enemy)
+    {
+        return enemy != null && enemy.IsAlive();
     }
 
     public void SetMoveDirection(Vector3 dir)

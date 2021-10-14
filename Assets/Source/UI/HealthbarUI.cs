@@ -8,7 +8,7 @@ public class HealthbarUI : MonoBehaviour
 
     void Update()
     {
-        if (enemy == null)
+        if (enemy == null || enemy.GetState() == EnemyState.DEAD)
         {
             Destroy(gameObject);
             return;
