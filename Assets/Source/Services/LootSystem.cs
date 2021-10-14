@@ -32,6 +32,6 @@ public class LootSystem : GameService
 
     void PickupLoot(Drop drop)
     {
-        Main.Get<Player>().ChangeWeapon(drop.droppedWeapon);
+        Main.Get<Player>().GiveWeapon(drop.GetLootPrefab());
     }
 }

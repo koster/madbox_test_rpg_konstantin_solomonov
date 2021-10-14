@@ -9,6 +9,8 @@ public class Player : GameService
 
     public List<Weapon> startingWeapons = new List<Weapon>();
 
+    List<Weapon> weaponsInventory = new List<Weapon>();
+
     JoystickInput joystick;
     Unit unit;
     int selectedWeapon;
@@ -22,12 +24,23 @@ public class Player : GameService
 
         var range = Random.Range(0, startingWeapons.Count);
         var startingWeapon = startingWeapons[range];
-        ChangeWeapon(startingWeapon);
+        GiveWeapon(startingWeapon);
     }
 
     public Vector3 GetPosition()
     {
         return unit.transform.position;
+    }
+
+    public void GiveWeapon(Weapon to)
+    {
+        if (!weaponsInventory.Contains(to))
+        {
+            weaponsInventory.Add(to);
+
+            ChangeWeapon(to);
+            selectedWeapon = weaponsInventory.IndexOf(to);
+        }
     }
 
     public void ChangeWeapon(Weapon to)
@@ -44,6 +57,6 @@ public class Player : GameService
     public void NextWeapon()
     {
         selectedWeapon++;
-        ChangeWeapon(startingWeapons[selectedWeapon % startingWeapons.Count]);
+        ChangeWeapon(weaponsInventory[selectedWeapon % weaponsInventory.Count]);
     }
 }

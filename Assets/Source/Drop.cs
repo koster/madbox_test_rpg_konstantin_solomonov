@@ -18,7 +18,8 @@ public class Drop : MonoBehaviour
     
     public float pickupRange = 1f;
 
-    public Weapon droppedWeapon;
+    Weapon droppedWeaponPrefab;
+    Weapon droppedWeapon;
 
     DropState state;
     
@@ -44,9 +45,15 @@ public class Drop : MonoBehaviour
         if (droppedWeapon != null)
             Destroy(droppedWeapon.gameObject);
 
+        droppedWeaponPrefab = weapon;
         droppedWeapon = Instantiate(weapon, slot);
     }
 
+    public Weapon GetLootPrefab()
+    {
+        return droppedWeaponPrefab;
+    }
+    
     void Update()
     {
         slot.Rotate(0, rotationSpeed * Time.deltaTime, 0);
