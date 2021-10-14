@@ -21,13 +21,7 @@ public class JoystickUI : MonoBehaviour
     {
         if (joystick.IsDown())
         {
-            var rectTrans = GetComponent<RectTransform>();
-            var parent = (RectTransform)rectTrans.parent;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                parent, joystick.GetOriginScreenPos(), null, out var position
-            );
-            rectTrans.anchoredPosition = position;
-
+            SnapToTouchPoint();
             innerStick.localPosition = Vector3.Lerp(innerStick.localPosition, -joystick.GetRawVector() * radiusPX, 0.9f);
         }
         else
@@ -35,5 +29,17 @@ public class JoystickUI : MonoBehaviour
             transform.position = originPoint;
             innerStick.localPosition = Vector3.zero;
         }
+    }
+
+    void SnapToTouchPoint()
+    {
+        var rectTrans = GetComponent<RectTransform>();
+        var parent = (RectTransform)rectTrans.parent;
+        var centerOffset = new Vector3(Screen.width / 2f, Screen.height / 2f);
+        var screenPoint = joystick.GetOriginScreenPos() + centerOffset;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parent, screenPoint: screenPoint, null, out var position
+        );
+        rectTrans.anchoredPosition = position;
     }
 }

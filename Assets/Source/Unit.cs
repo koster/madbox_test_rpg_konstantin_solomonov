@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hero : MonoBehaviour
+public class Unit : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float attackRange = 1f;
     public float attackRate = 1f;
 
     public float rotationDamping = 0.25f;
-
-    public List<Weapon> startingWeapons = new List<Weapon>();
 
     public Transform weaponSlot;
 
@@ -18,25 +16,18 @@ public class Hero : MonoBehaviour
     Weapon equippedWeapon;
 
     float attackCooldown;
-
-    JoystickInput joystick;
-
+    
     Animator animator;
-    HeroAnimationEvents animationEvents;
+    UnitAnimationEvents animationEvents;
 
     Collider attackTarget;
+    Vector3 moveDirection;
 
     void Start()
     {
-        joystick = Main.Get<JoystickInput>();
-
-        var range = Random.Range(0, startingWeapons.Count);
-        var startingWeapon = startingWeapons[range];
-        Equip(startingWeapon);
-
         animator = GetComponentInChildren<Animator>();
 
-        animationEvents = GetComponentInChildren<HeroAnimationEvents>();
+        animationEvents = GetComponentInChildren<UnitAnimationEvents>();
         animationEvents.HitDamage += HitAnimation;
 
         InvokeRepeating(nameof(SlowTick), 0f, 1 / 10f);
@@ -44,8 +35,10 @@ public class Hero : MonoBehaviour
 
     public void Equip(Weapon weapon)
     {
-        equippedWeapon = Instantiate(weapon, Vector3.zero, Quaternion.identity);
-        equippedWeapon.transform.SetParent(weaponSlot, false);
+        if (equippedWeapon != null)
+            Destroy(equippedWeapon.gameObject);
+        
+        equippedWeapon = Instantiate(weapon, weaponSlot);
     }
 
     void OnDestroy()
@@ -92,14 +85,14 @@ public class Hero : MonoBehaviour
         var desiredAttackDuration = 1f / CalculateAttackRate();
         animator.SetFloat("AttackSpeedMul", attackAnimation.length / desiredAttackDuration);
         animator.SetFloat("MoveSpeedMul", 1f + (equippedWeapon.movementSpeedModifier - 1f) / 4f);
-        animator.SetFloat("MoveInput", joystick.GetMoveVector().magnitude);
+        animator.SetFloat("MoveInput", moveDirection.magnitude);
     }
 
     void FixedUpdate()
     {
         attackCooldown -= Time.fixedDeltaTime;
 
-        if (!joystick.IsDown())
+        if (!Main.Get<JoystickInput>().IsDown())
         {
             if (attackTarget != null)
             {
@@ -118,8 +111,7 @@ public class Hero : MonoBehaviour
             NotAttacking();
         }
 
-        var moveVector = joystick.GetMoveVector();
-        transform.position += moveVector * Time.fixedDeltaTime * CalculateMoveSpeed();
+        transform.position += moveDirection * Time.fixedDeltaTime * CalculateMoveSpeed();
 
         if (attackTarget != null)
         {
@@ -130,9 +122,14 @@ public class Hero : MonoBehaviour
         else
         {
             var rotationThreshold = 0.1f;
-            if (moveVector.magnitude > rotationThreshold)
-                transform.forward = Vector3.Lerp(transform.forward, -moveVector.normalized, rotationDamping);
+            if (moveDirection.magnitude > rotationThreshold)
+                transform.forward = Vector3.Lerp(transform.forward, -moveDirection.normalized, rotationDamping);
         }
+    }
+
+    public void SetMoveDirection(Vector3 dir)
+    {
+        moveDirection = dir;
     }
 
     void Attacking()

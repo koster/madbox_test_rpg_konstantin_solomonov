@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HeroAnimationEvents : MonoBehaviour
+public class UnitAnimationEvents : MonoBehaviour
 {
     public event UnityAction HitDamage;
 

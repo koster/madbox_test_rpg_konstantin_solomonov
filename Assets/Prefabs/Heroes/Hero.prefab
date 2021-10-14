@@ -525,14 +525,13 @@ MonoBehaviour:
   moveSpeed: 5
   attackRange: 2
   attackRate: 1
-  sensitivity: 0.01
-  motionDamping: 0.9
   rotationDamping: 0.25
   startingWeapons:
   - {fileID: -4313729535623201316, guid: bac79aa2a0057e5429a664d3f336da3d, type: 3}
   - {fileID: -7638288353668623496, guid: 4d0814cafad460246890ec829fa7071d, type: 3}
   - {fileID: 182007167353829114, guid: 17cf6e9fc28f3a544bc062d510f66f4a, type: 3}
   weaponSlot: {fileID: 1993995369825730728}
+  attackAnimation: {fileID: 7400000, guid: 8055cf7b50b7f1e4685a28e43661909d, type: 2}
 --- !u!1 &3512741108777884559
 GameObject:
   m_ObjectHideFlags: 0
