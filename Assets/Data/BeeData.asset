@@ -19,4 +19,4 @@ MonoBehaviour:
   attackRate: 1
   rotationDamping: 0.1
   height: 1.9
-  attackAnimation: {fileID: 0}
+  attackAnimation: {fileID: 7400000, guid: 13c807e7b4d48a84e87d7494ff28108b, type: 2}

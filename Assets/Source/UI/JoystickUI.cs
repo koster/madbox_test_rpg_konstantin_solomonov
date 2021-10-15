@@ -19,6 +19,9 @@ public class JoystickUI : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (Main.Get<Player>().unit.IsDead())
+            Destroy(gameObject);
+        
         if (joystick.IsDown())
         {
             SnapToTouchPoint();

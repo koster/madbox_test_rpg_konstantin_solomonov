@@ -29,6 +29,9 @@ public class WeaponUI : MonoBehaviour
 
     void Update()
     {
+        if (Main.Get<Player>().unit.IsDead())
+            Destroy(gameObject);
+        
         if (shownWeapon != null)
             shownWeapon.transform.Rotate(0f, 60f * Time.deltaTime, 0);
     }

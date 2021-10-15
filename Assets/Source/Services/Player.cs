@@ -10,7 +10,7 @@ public class Player : GameService
     public List<Weapon> startingWeapons = new List<Weapon>();
 
     JoystickInput joystick;
-    Unit unit;
+    public Unit unit;
     Enemy attackTarget;
 
     List<Weapon> weaponsInventory = new List<Weapon>();
