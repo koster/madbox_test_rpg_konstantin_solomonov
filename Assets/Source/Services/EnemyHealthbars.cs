@@ -15,7 +15,7 @@ public class EnemyHealthbars : GameService
     void AttachHealthbar(Enemy enemy)
     {
         var hbp = Instantiate(healthbarPrefab);
-        hbp.enemy = enemy;
+        hbp.enemy = enemy.GetUnit();
         hbp.transform.parent = transform;
     }
 }

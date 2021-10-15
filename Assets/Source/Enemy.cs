@@ -1,58 +1,44 @@
 using UnityEngine;
 
-public enum EnemyState
-{
-    ALIVE,
-    DEAD
-}
-
 public class Enemy : MonoBehaviour
 {
-    public int maxHealth;
-    public float height = 1f;
-
-    EnemyState state;
-
-    int health;
-    Animator animator;
+    public Weapon weapon;
+    public Unit unit;
+    Vector3 randee;
 
     void Awake()
     {
-        animator = GetComponentInChildren<Animator>();
-        health = maxHealth;
-        state = EnemyState.ALIVE;
+        unit.OnKilled.AddListener(OnEnemyKilled);
+        unit.Equip(weapon);
+        
+        InvokeRepeating(nameof(RAndomiz), 0f,5f);
     }
 
-    public EnemyState GetState()
+    void RAndomiz()
     {
-        return state;
-    }
-
-    public int GetHealth()
-    {
-        return health;
-    }
-
-    public void Hurt(int damage)
-    {
-        if (state == EnemyState.DEAD)
-            return;
-
-        health -= damage;
-
-        var damagePoint = transform.position + Vector3.up * height / 2f;
-        Main.Get<GameEvents>().DamageDealt?.Invoke(damagePoint, damage);
-
-        if (health <= 0)
+        if (Random.Range(0f, 1f) < 0.5f)
         {
-            Main.Get<GameEvents>().EnemyKilled?.Invoke(this);
-            state = EnemyState.DEAD;
-            animator.SetBool("Dead", true);
+            randee = Random.insideUnitSphere;
+            randee.y = 0;
+        }
+        else
+        {
+            randee = Vector3.zero;
         }
     }
 
-    public bool IsAlive()
+    void Update()
     {
-        return health > 0;
+        unit.SetMoveDirection(randee);
+    }
+
+    void OnEnemyKilled()
+    {
+        Main.Get<GameEvents>().EnemyKilled?.Invoke(this);
+    }
+
+    public Unit GetUnit()
+    {
+        return unit;
     }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 297763066410921876}
   - component: {fileID: 715259703}
   - component: {fileID: 715259702}
+  - component: {fileID: 8656633749327443888}
   m_Layer: 7
   m_Name: Bee
   m_TagString: Untagged
@@ -58,8 +59,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca85b82a57b934245880a0fe3cb2e0da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weapon: {fileID: 4429635130581395359, guid: 9cec4bb696ffde741a342d0db5e6aa2c, type: 3}
+  unit: {fileID: 8656633749327443888}
+--- !u!114 &8656633749327443888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1358921057130329688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee029a80a5ebe6408010172a1bde21a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  attackRange: 3
+  attackRate: 1
+  rotationDamping: 0.1
   maxHealth: 100
-  height: 2.3
+  height: 1.9
+  weaponSlot: {fileID: 6926839794863012753}
+  attackAnimation: {fileID: 7400000, guid: e45f556cec664e74daed8e0ebae61814, type: 3}
+  OnKilled:
+    m_PersistentCalls:
+      m_Calls: []
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &6926839794863368101
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,6 +440,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6926839794863012759}
   - component: {fileID: 6926839794853975167}
+  - component: {fileID: 101066145356595265}
   m_Layer: 7
   m_Name: Bee
   m_TagString: Enemy
@@ -427,7 +455,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6926839794863368119}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.2748578, y: 2.2748578, z: 2.2748578}
   m_Children:
@@ -455,6 +483,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &101066145356595265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6926839794863368119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 053b6d20b968ffd40a19df45578f921e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6926839794863368121
 GameObject:
   m_ObjectHideFlags: 0

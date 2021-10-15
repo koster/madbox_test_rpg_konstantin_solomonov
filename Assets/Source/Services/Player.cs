@@ -11,6 +11,7 @@ public class Player : GameService
 
     JoystickInput joystick;
     Unit unit;
+    Enemy attackTarget;
 
     List<Weapon> weaponsInventory = new List<Weapon>();
     int selectedWeapon;
@@ -45,6 +46,9 @@ public class Player : GameService
 
     public void ChangeWeapon(Weapon to)
     {
+        if (unit.IsEquipped(to))
+            return;
+        
         unit.Equip(to);
         Main.Get<GameEvents>().PlayerWeaponChanged?.Invoke(to);
     }

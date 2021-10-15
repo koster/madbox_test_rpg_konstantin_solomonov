@@ -4,11 +4,11 @@ using UnityEngine.UI;
 public class HealthbarUI : MonoBehaviour
 {
     public Slider slider;
-    public Enemy enemy;
+    public Unit enemy;
 
     void Update()
     {
-        if (enemy == null || enemy.GetState() == EnemyState.DEAD)
+        if (enemy == null || enemy.GetState() == UnitState.DEAD)
         {
             Destroy(gameObject);
             return;
