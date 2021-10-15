@@ -1,121 +1,70 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum UnitState
-{
-    ALIVE,
-    DEAD
-}
-
 public class Unit : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float attackRange = 1f;
-    public float attackRate = 1f;
+    public UnitData data;
 
-    public float rotationDamping = 0.25f;
+    public int health;
 
-    public int maxHealth;
-    public float height = 1f;
+    public Vector3 moveDirection;
+
+    public Unit attackTarget;
 
     public Transform weaponSlot;
 
-    public AnimationClip attackAnimation;
-    public UnityEvent OnKilled;
     public LayerMask enemyMask;
 
-    Weapon equippedWeapon;
-    Weapon equippedWeaponInstance;
+    public Weapon equippedWeapon;
 
-    float attackCooldown;
+    public UnityEvent OnKilled;
+    public UnityEvent OnHurt;
 
-    Animator animator;
-    UnitAnimationEvents animationEvents;
+    public bool canAttack;
+    public bool isAttacking;
 
-    Vector3 moveDirection;
+    //
 
-    UnitState state;
-
-    int health;
-    Unit attackTarget;
-
-    void Start()
+    void Awake()
     {
-        health = maxHealth;
-        state = UnitState.ALIVE;
+        health = data.maxHealth;
 
-        animator = GetComponentInChildren<Animator>();
-
-        animationEvents = GetComponentInChildren<UnitAnimationEvents>();
-        animationEvents.HitDamage += HitAnimation;
-
-        InvokeRepeating(nameof(SlowTick), 0f, 1 / 10f);
+        gameObject.AddComponent<UnitMotor>().unit = this;
+        gameObject.AddComponent<UnitHealth>().unit = this;
+        gameObject.AddComponent<UnitWeapon>().unit = this;
+        gameObject.AddComponent<UnitAnimator>().unit = this;
     }
 
-    Collider[] collider = new Collider[32];
-
-    Collider[] FetchTargets()
+    public float CalculateAttackRange()
     {
-        for (var i = 0; i < collider.Length; i++)
-            collider[i] = null;
-
-        Physics.OverlapSphereNonAlloc(transform.position, CalculateAttackRange(), collider, enemyMask);
-        return collider;
+        return data.attackRange * equippedWeapon.attackRadiusModifier;
     }
 
-    void SlowTick()
+    public float CalculateMoveSpeed()
     {
-        var enemies = FetchTargets();
-
-        Collider closest = null;
-        foreach (var enemy in enemies)
-        {
-            if (enemy == null)
-                break;
-
-            if (closest == null)
-                closest = enemy;
-            else if (IsCloserToMeThan(closest.transform, enemy.transform))
-                closest = enemy;
-        }
-
-        attackTarget = closest?.GetComponent<Unit>();
+        if (equippedWeapon != null)
+            return data.moveSpeed * equippedWeapon.movementSpeedModifier;
+        return data.moveSpeed;
     }
 
-    bool IsCloserToMeThan(Transform clsst, Transform enemy)
+    public float CalculateAttackRate()
     {
-        return Vector3.Distance(clsst.position, transform.position) <
-               Vector3.Distance(enemy.position, transform.position);
+        return data.attackRate * equippedWeapon.attackSpeedModifier;
     }
 
-    public UnitState GetState()
+    public bool IsEquipped(Weapon to)
     {
-        return state;
+        return equippedWeapon == to;
     }
 
-    public int GetHealth()
+    public void Equip(Weapon wpn)
     {
-        return health;
+        GetComponent<UnitWeapon>().Equip(wpn);
     }
 
-    public void Hurt(int damage)
+    public bool IsValidTarget(Unit unit)
     {
-        if (state == UnitState.DEAD)
-            return;
-
-        health -= damage;
-
-        var damagePoint = transform.position + Vector3.up * height / 2f;
-        Main.Get<GameEvents>().DamageDealt?.Invoke(damagePoint, damage);
-        animator.PlayInFixedTime("Hurt", animator.GetLayerIndex("HurtLayer"), 0);
-
-        if (health <= 0)
-        {
-            OnKilled?.Invoke();
-            state = UnitState.DEAD;
-            animator.SetBool("Dead", true);
-            animator.SetBool("Attacking", false);
-        }
+        return unit != null && unit.IsAlive();
     }
 
     public bool IsAlive()
@@ -123,14 +72,49 @@ public class Unit : MonoBehaviour
         return health > 0;
     }
 
-    public void Equip(Weapon weapon)
+    public bool IsDead()
     {
-        equippedWeapon = weapon;
+        return health <= 0;
+    }
+}
 
-        if (equippedWeaponInstance != null)
-            Destroy(equippedWeaponInstance.gameObject);
+public class UnitHealth : MonoBehaviour
+{
+    public Unit unit;
 
-        equippedWeaponInstance = Instantiate(weapon, weaponSlot);
+    public void Hurt(int damage)
+    {
+        if (unit.IsDead())
+            return;
+
+        unit.health -= damage;
+
+        var damagePoint = transform.position + Vector3.up * unit.data.height / 2f;
+        Main.Get<GameEvents>().DamageDealt?.Invoke(damagePoint, damage);
+
+        unit.OnHurt?.Invoke();
+
+        if (unit.health <= 0)
+        {
+            unit.OnKilled?.Invoke();
+        }
+    }
+}
+
+public class UnitWeapon : MonoBehaviour
+{
+    public Unit unit;
+
+    UnitAnimationEvents animationEvents;
+    Weapon equippedWeaponInstance;
+    float attackCooldown;
+
+    void Start()
+    {
+        animationEvents = GetComponentInChildren<UnitAnimationEvents>();
+        animationEvents.HitDamage += HitAnimation;
+
+        InvokeRepeating(nameof(SlowTick), 0f, 1 / 10f);
     }
 
     void OnDestroy()
@@ -140,106 +124,165 @@ public class Unit : MonoBehaviour
 
     public void HitAnimation()
     {
-        if (attackTarget == null)
+        if (unit.attackTarget == null)
             return;
 
-        attackTarget.Hurt(equippedWeaponInstance.damage);
+        unit.attackTarget.GetComponent<UnitHealth>().Hurt(unit.equippedWeapon.damage);
     }
 
-    void Update()
+    void SlowTick()
     {
-        var desiredAttackDuration = 1f / CalculateAttackRate();
-        animator.SetFloat("AttackSpeedMul", attackAnimation.length / desiredAttackDuration);
-        animator.SetFloat("MoveSpeedMul", 1f + (equippedWeaponInstance.movementSpeedModifier - 1f) / 4f);
-        animator.SetFloat("MoveInput", moveDirection.magnitude);
+        if (unit.IsDead())
+        {
+            unit.attackTarget = null;
+            return;
+        }
+
+        var enemies = FetchTargets();
+
+        Unit closest = null;
+        foreach (var collider in enemies)
+        {
+            var unitTarget = collider?.GetComponent<Unit>();
+            
+            if (!unit.IsValidTarget(unitTarget))
+                break;
+            
+            if (closest == null)
+                closest = unitTarget;
+            else if (IsCloserToMeThan(closest.transform, collider.transform))
+                closest = unitTarget;
+        }
+
+        unit.attackTarget = closest;
+    }
+
+    Collider[] colliders = new Collider[32];
+
+    Collider[] FetchTargets()
+    {
+        for (var i = 0; i < colliders.Length; i++)
+            colliders[i] = null;
+
+        Physics.OverlapSphereNonAlloc(transform.position, unit.CalculateAttackRange(), colliders, unit.enemyMask);
+        return colliders;
+    }
+
+    bool IsCloserToMeThan(Transform clsst, Transform enemy)
+    {
+        return Vector3.Distance(clsst.position, transform.position) <
+               Vector3.Distance(enemy.position, transform.position);
+    }
+
+    public void Equip(Weapon weapon)
+    {
+        unit.equippedWeapon = weapon;
+
+        if (equippedWeaponInstance != null)
+            Destroy(equippedWeaponInstance.gameObject);
+
+        equippedWeaponInstance = Instantiate(weapon, unit.weaponSlot);
     }
 
     void FixedUpdate()
     {
-        if (state == UnitState.DEAD)
+        if (unit.IsDead())
             return;
 
         attackCooldown -= Time.fixedDeltaTime;
 
-        if (!Main.Get<JoystickInput>().IsDown())
+        if (unit.canAttack)
         {
-            if (IsValidTarget(attackTarget))
+            if (unit.IsValidTarget(unit.attackTarget))
             {
                 if (attackCooldown < 0)
-                {
                     Attacking();
-                }
             }
             else
-            {
                 NotAttacking();
-            }
         }
         else
-        {
             NotAttacking();
-        }
-
-        transform.position += moveDirection * Time.fixedDeltaTime * CalculateMoveSpeed();
-
-        if (IsValidTarget(attackTarget))
-        {
-            var faceTarget = attackTarget.transform.position - transform.position;
-            faceTarget.y = 0;
-            transform.forward = Vector3.Lerp(transform.forward, faceTarget, rotationDamping);
-        }
-        else
-        {
-            var rotationThreshold = 0.1f;
-            if (moveDirection.magnitude > rotationThreshold)
-                transform.forward = Vector3.Lerp(transform.forward, moveDirection.normalized, rotationDamping);
-        }
-    }
-
-    bool IsValidTarget(Unit unit)
-    {
-        return unit != null && unit.IsAlive();
-    }
-
-    public void SetMoveDirection(Vector3 dir)
-    {
-        moveDirection = dir;
     }
 
     void Attacking()
     {
-        attackCooldown = 1f / CalculateAttackRate();
-        animator.SetBool("Attacking", true);
+        attackCooldown = 1f / unit.CalculateAttackRate();
+        unit.isAttacking = true;
     }
 
     void NotAttacking()
     {
+        unit.isAttacking = false;
+    }
+}
+
+public class UnitAnimator : MonoBehaviour
+{
+    public Unit unit;
+
+    Animator animator;
+
+    void Start()
+    {
+        animator = GetComponentInChildren<Animator>();
+
+        unit.OnHurt.AddListener(UnitHurt);
+        unit.OnKilled.AddListener(UnitKilled);
+    }
+
+    void UnitHurt()
+    {
+        animator.PlayInFixedTime("Hurt", animator.GetLayerIndex("HurtLayer"), 0);
+    }
+
+    void UnitKilled()
+    {
+        animator.SetBool("Dead", true);
         animator.SetBool("Attacking", false);
     }
 
-    public float CalculateAttackRange()
+    void Update()
     {
-        return attackRange * equippedWeaponInstance.attackRadiusModifier;
+        if (unit.IsDead())
+            return;
+
+        var desiredAttackDuration = 1f / unit.CalculateAttackRate();
+        animator.SetFloat("AttackSpeedMul", unit.data.attackAnimation.length / desiredAttackDuration);
+        animator.SetFloat("MoveSpeedMul", 1f + (unit.equippedWeapon.movementSpeedModifier - 1f) / 3f);
+        animator.SetFloat("MoveInput", unit.moveDirection.magnitude);
+        animator.SetBool("Attacking", unit.isAttacking);
     }
 
-    float CalculateMoveSpeed()
+    void FixedUpdate()
     {
-        return moveSpeed * equippedWeaponInstance.movementSpeedModifier;
-    }
+        if (unit.IsDead())
+            return;
 
-    float CalculateAttackRate()
-    {
-        return attackRate * equippedWeaponInstance.attackSpeedModifier;
+        if (unit.IsValidTarget(unit.attackTarget))
+        {
+            var faceTarget = unit.attackTarget.transform.position - transform.position;
+            faceTarget.y = 0;
+            transform.forward = Vector3.Lerp(transform.forward, faceTarget, unit.data.rotationDamping);
+        }
+        else
+        {
+            var rotationThreshold = 0.1f;
+            if (unit.moveDirection.magnitude > rotationThreshold)
+                transform.forward = Vector3.Lerp(transform.forward, unit.moveDirection.normalized, unit.data.rotationDamping);
+        }
     }
+}
 
-    public bool IsEquipped(Weapon to)
-    {
-        return equippedWeapon == to;
-    }
+public class UnitMotor : MonoBehaviour
+{
+    public Unit unit;
 
-    void OnDrawGizmos()
+    void FixedUpdate()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        if (unit.IsDead())
+            return;
+
+        transform.position += unit.moveDirection * Time.fixedDeltaTime * unit.CalculateMoveSpeed();
     }
 }

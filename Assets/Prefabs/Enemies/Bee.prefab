@@ -73,20 +73,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee029a80a5ebe6408010172a1bde21a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  attackRange: 3
-  attackRate: 1
-  rotationDamping: 0.1
-  maxHealth: 100
-  height: 1.9
+  data: {fileID: 11400000, guid: 5fa51a3893c6f7441bc75f0e0f452847, type: 2}
+  health: 0
+  moveDirection: {x: 0, y: 0, z: 0}
+  attackTarget: {fileID: 0}
   weaponSlot: {fileID: 6926839794863012753}
-  attackAnimation: {fileID: 7400000, guid: e45f556cec664e74daed8e0ebae61814, type: 3}
-  OnKilled:
-    m_PersistentCalls:
-      m_Calls: []
   enemyMask:
     serializedVersion: 2
     m_Bits: 64
+  equippedWeapon: {fileID: 0}
+  OnKilled:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHurt:
+    m_PersistentCalls:
+      m_Calls: []
+  canAttack: 1
+  isAttacking: 0
 --- !u!1 &6926839794863368101
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,13 +8,13 @@ public class HealthbarUI : MonoBehaviour
 
     void Update()
     {
-        if (enemy == null || enemy.GetState() == UnitState.DEAD)
+        if (enemy == null || enemy.IsDead())
         {
             Destroy(gameObject);
             return;
         }
 
-        transform.position = enemy.transform.position + Vector3.up * enemy.height;
-        slider.value = (float)enemy.GetHealth() / enemy.maxHealth;
+        transform.position = enemy.transform.position + Vector3.up * enemy.data.height;
+        slider.value = (float)enemy.health / enemy.data.maxHealth;
     }
 }

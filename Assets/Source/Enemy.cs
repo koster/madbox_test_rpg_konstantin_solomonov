@@ -4,32 +4,32 @@ public class Enemy : MonoBehaviour
 {
     public Weapon weapon;
     public Unit unit;
-    Vector3 randee;
+    Vector3 random;
 
-    void Awake()
+    void Start()
     {
         unit.OnKilled.AddListener(OnEnemyKilled);
         unit.Equip(weapon);
         
-        InvokeRepeating(nameof(RAndomiz), 0f,5f);
+        InvokeRepeating(nameof(Randomize), 0f,5f);
     }
 
-    void RAndomiz()
+    void Randomize()
     {
         if (Random.Range(0f, 1f) < 0.5f)
         {
-            randee = Random.insideUnitSphere;
-            randee.y = 0;
+            random = Random.insideUnitSphere;
+            random.y = 0;
         }
         else
         {
-            randee = Vector3.zero;
+            random = Vector3.zero;
         }
     }
 
     void Update()
     {
-        unit.SetMoveDirection(randee);
+        unit.moveDirection = random;
     }
 
     void OnEnemyKilled()

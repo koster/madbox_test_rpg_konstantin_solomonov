@@ -48,14 +48,15 @@ public class Player : GameService
     {
         if (unit.IsEquipped(to))
             return;
-        
+
         unit.Equip(to);
         Main.Get<GameEvents>().PlayerWeaponChanged?.Invoke(to);
     }
 
     void Update()
     {
-        unit.SetMoveDirection(joystick.GetMoveVector());
+        unit.canAttack = !joystick.IsDown();
+        unit.moveDirection = joystick.GetMoveVector();
     }
 
     public void NextWeapon()

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f4a02bd5d34de7ae79fd94e489a49d, type: 3}
+  m_Name: HeroData
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 3206923099687242354, guid: 89de4008f8cc87d4a8e2924ba9d12eb7, type: 3}
+  maxHealth: 100
+  moveSpeed: 5
+  attackRange: 2
+  attackRate: 1
+  rotationDamping: 0.25
+  height: 2
+  attackAnimation: {fileID: 7400000, guid: 8055cf7b50b7f1e4685a28e43661909d, type: 2}
