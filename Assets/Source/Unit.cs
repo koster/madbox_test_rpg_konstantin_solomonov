@@ -130,7 +130,7 @@ public class UnitWeapon : MonoBehaviour
         animationEvents = GetComponentInChildren<UnitAnimationEvents>();
         animationEvents.HitDamage += OnDamageMomentDuringHitAnimation;
 
-        InvokeRepeating(nameof(SlowTick), 0f, 1 / 10f);
+        InvokeRepeating(nameof(SlowTick), Random.Range(0f, 1f), 1 / 10f);
     }
 
     void OnDestroy()
@@ -153,7 +153,7 @@ public class UnitWeapon : MonoBehaviour
         if (unit.attackTarget == null)
             return;
 
-        var delta = transform.position - unit.attackTarget.transform.position;
+        var delta = unit.attackTarget.transform.position - transform.position;
         var angle = Vector3.Angle(transform.forward, delta);
         var distance = delta.magnitude;
 
