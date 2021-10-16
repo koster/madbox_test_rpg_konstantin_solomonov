@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class Unit : MonoBehaviour
 {
@@ -151,7 +153,7 @@ public class UnitWeapon : MonoBehaviour
         var angle = Vector3.Angle(transform.forward, delta);
         var distance = delta.magnitude;
 
-        if (Mathf.Abs(angle) < unit.equippedWeapon.arc && distance < unit.CalculateAttackRange())
+        if (Mathf.Abs(angle) < unit.equippedWeapon.arc && distance <= unit.CalculateAttackRange())
             unit.attackTarget.GetComponent<UnitHealth>().Hurt(unit.equippedWeapon.damage);
     }
 
@@ -188,6 +190,10 @@ public class UnitWeapon : MonoBehaviour
             if (!unit.IsValidTarget(unitTarget))
                 continue;
 
+            var distance = Vector3.Distance(unit.transform.position, unitTarget.transform.position);
+            if (distance > unit.CalculateAttackRange())
+                continue;
+
             if (closest == null)
                 closest = unitTarget;
             else if (IsCloserToMeThan(closest.transform, collider.transform))
@@ -206,6 +212,11 @@ public class UnitWeapon : MonoBehaviour
 
         Physics.OverlapSphereNonAlloc(transform.position, unit.CalculateAttackRange(), colliders, unit.enemyMask);
         return colliders;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, unit.CalculateAttackRange());
     }
 
     bool IsCloserToMeThan(Transform clsst, Transform enemy)

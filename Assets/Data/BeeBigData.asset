@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32f4a02bd5d34de7ae79fd94e489a49d, type: 3}
   m_Name: BeeBigData
   m_EditorClassIdentifier: 
-  prefab: {fileID: 1358921057130329688, guid: 41e04faa14fb7a34e8b16750ec910fc3, type: 3}
+  prefab: {fileID: 1358921057130329688, guid: 684b483a0f6952f46a34a97e21071acb, type: 3}
   maxHealth: 200
   moveSpeed: 2
-  attackRange: 2
+  attackRange: 3
   attackRate: 0.9
   rotationDamping: 0.05
-  height: 3
+  height: 4.5
   attackAnimation: {fileID: 7400000, guid: 13c807e7b4d48a84e87d7494ff28108b, type: 2}

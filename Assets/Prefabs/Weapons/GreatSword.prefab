@@ -96,6 +96,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackSpeedModifier: 0.9
   movementSpeedModifier: 0.6
-  attackRadiusModifier: 1.7
+  attackRadiusModifier: 1.5
   damage: 100
   arc: 360

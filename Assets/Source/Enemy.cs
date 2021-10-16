@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class Enemy : MonoBehaviour
     public Unit engagedTarget;
 
     List<BehaviourNode> enemyBehaviour;
+    float deathClock;
 
     void Start()
     {
@@ -54,6 +56,29 @@ public class Enemy : MonoBehaviour
             }
 
             n++;
+        }
+    }
+
+    void Update()
+    {
+        RemoveWhenDead();
+    }
+
+    void RemoveWhenDead()
+    {
+        if (unit.IsDead())
+        {
+            deathClock += Time.deltaTime;
+
+            if (deathClock > 2f)
+            {
+                transform.position += Vector3.down * Time.deltaTime * 0.25f;
+
+                if (transform.position.y < -5f)
+                {
+                    Destroy(gameObject);
+                }
+            }
         }
     }
 
