@@ -186,7 +186,7 @@ public class UnitWeapon : MonoBehaviour
             var unitTarget = collider?.GetComponent<Unit>();
 
             if (!unit.IsValidTarget(unitTarget))
-                break;
+                continue;
 
             if (closest == null)
                 closest = unitTarget;
