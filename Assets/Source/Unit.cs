@@ -7,6 +7,7 @@ public class Unit : MonoBehaviour
 
     public int health;
 
+    public Vector3? facingPoint;
     public Vector3 moveDirection;
 
     public Unit attackTarget;
@@ -20,7 +21,6 @@ public class Unit : MonoBehaviour
     public UnityEvent OnKilled;
     public UnityEvent OnHurt;
 
-    public bool canAttack;
     public bool isAttacking;
 
     //
@@ -37,7 +37,9 @@ public class Unit : MonoBehaviour
 
     public float CalculateAttackRange()
     {
-        return data.attackRange * equippedWeapon.attackRadiusModifier;
+        if (equippedWeapon != null)
+            return data.attackRange * equippedWeapon.attackRadiusModifier;
+        return data.attackRange;
     }
 
     public float CalculateMoveSpeed()
@@ -49,7 +51,9 @@ public class Unit : MonoBehaviour
 
     public float CalculateAttackRate()
     {
-        return data.attackRate * equippedWeapon.attackSpeedModifier;
+        if (equippedWeapon != null)
+            return data.attackRate * equippedWeapon.attackSpeedModifier;
+        return data.attackRate;
     }
 
     public bool IsEquipped(Weapon to)
@@ -60,6 +64,16 @@ public class Unit : MonoBehaviour
     public void Equip(Weapon wpn)
     {
         GetComponent<UnitWeapon>().Equip(wpn);
+    }
+
+    public void Attacking()
+    {
+        GetComponent<UnitWeapon>().Attacking();
+    }
+
+    public void NotAttacking()
+    {
+        GetComponent<UnitWeapon>().NotAttacking();
     }
 
     public bool IsValidTarget(Unit unit)
@@ -75,6 +89,11 @@ public class Unit : MonoBehaviour
     public bool IsDead()
     {
         return health <= 0;
+    }
+
+    public bool IsInAttackRange(Unit target)
+    {
+        return Vector3.Distance(transform.position, target.transform.position) < CalculateAttackRange();
     }
 }
 
@@ -95,9 +114,7 @@ public class UnitHealth : MonoBehaviour
         unit.OnHurt?.Invoke();
 
         if (unit.health <= 0)
-        {
             unit.OnKilled?.Invoke();
-        }
     }
 }
 
@@ -107,27 +124,51 @@ public class UnitWeapon : MonoBehaviour
 
     UnitAnimationEvents animationEvents;
     Weapon equippedWeaponInstance;
-    float attackCooldown;
 
     void Start()
     {
         animationEvents = GetComponentInChildren<UnitAnimationEvents>();
-        animationEvents.HitDamage += HitAnimation;
+        animationEvents.HitDamage += OnDamageMomentDuringHitAnimation;
 
         InvokeRepeating(nameof(SlowTick), 0f, 1 / 10f);
     }
 
     void OnDestroy()
     {
-        animationEvents.HitDamage -= HitAnimation;
+        animationEvents.HitDamage -= OnDamageMomentDuringHitAnimation;
     }
 
-    public void HitAnimation()
+    public void Equip(Weapon weapon)
+    {
+        unit.equippedWeapon = weapon;
+
+        if (equippedWeaponInstance != null)
+            Destroy(equippedWeaponInstance.gameObject);
+
+        equippedWeaponInstance = Instantiate(weapon, unit.weaponSlot);
+    }
+
+    public void OnDamageMomentDuringHitAnimation()
     {
         if (unit.attackTarget == null)
             return;
 
-        unit.attackTarget.GetComponent<UnitHealth>().Hurt(unit.equippedWeapon.damage);
+        var delta = transform.position - unit.attackTarget.transform.position;
+        var angle = Vector3.Angle(transform.forward, delta);
+        var distance = delta.magnitude;
+
+        if (Mathf.Abs(angle) < unit.equippedWeapon.arc && distance < unit.CalculateAttackRange())
+            unit.attackTarget.GetComponent<UnitHealth>().Hurt(unit.equippedWeapon.damage);
+    }
+
+    public void Attacking()
+    {
+        unit.isAttacking = true;
+    }
+
+    public void NotAttacking()
+    {
+        unit.isAttacking = false;
     }
 
     void SlowTick()
@@ -138,16 +179,21 @@ public class UnitWeapon : MonoBehaviour
             return;
         }
 
+        UpdateClosestTarget();
+    }
+
+    void UpdateClosestTarget()
+    {
         var enemies = FetchTargets();
 
         Unit closest = null;
         foreach (var collider in enemies)
         {
             var unitTarget = collider?.GetComponent<Unit>();
-            
+
             if (!unit.IsValidTarget(unitTarget))
                 break;
-            
+
             if (closest == null)
                 closest = unitTarget;
             else if (IsCloserToMeThan(closest.transform, collider.transform))
@@ -172,48 +218,6 @@ public class UnitWeapon : MonoBehaviour
     {
         return Vector3.Distance(clsst.position, transform.position) <
                Vector3.Distance(enemy.position, transform.position);
-    }
-
-    public void Equip(Weapon weapon)
-    {
-        unit.equippedWeapon = weapon;
-
-        if (equippedWeaponInstance != null)
-            Destroy(equippedWeaponInstance.gameObject);
-
-        equippedWeaponInstance = Instantiate(weapon, unit.weaponSlot);
-    }
-
-    void FixedUpdate()
-    {
-        if (unit.IsDead())
-            return;
-
-        attackCooldown -= Time.fixedDeltaTime;
-
-        if (unit.canAttack)
-        {
-            if (unit.IsValidTarget(unit.attackTarget))
-            {
-                if (attackCooldown < 0)
-                    Attacking();
-            }
-            else
-                NotAttacking();
-        }
-        else
-            NotAttacking();
-    }
-
-    void Attacking()
-    {
-        attackCooldown = 1f / unit.CalculateAttackRate();
-        unit.isAttacking = true;
-    }
-
-    void NotAttacking()
-    {
-        unit.isAttacking = false;
     }
 }
 
@@ -259,9 +263,9 @@ public class UnitAnimator : MonoBehaviour
         if (unit.IsDead())
             return;
 
-        if (unit.IsValidTarget(unit.attackTarget))
+        if (unit.facingPoint.HasValue)
         {
-            var faceTarget = unit.attackTarget.transform.position - transform.position;
+            var faceTarget = unit.facingPoint.Value - transform.position;
             faceTarget.y = 0;
             transform.forward = Vector3.Lerp(transform.forward, faceTarget, unit.data.rotationDamping);
         }

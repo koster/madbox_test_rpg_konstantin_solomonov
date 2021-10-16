@@ -55,7 +55,21 @@ public class Player : GameService
 
     void Update()
     {
-        unit.canAttack = !joystick.IsDown();
+        if (unit.IsValidTarget(unit.attackTarget))
+            unit.facingPoint = unit.attackTarget.transform.position;
+        else
+            unit.facingPoint = null;
+
+        if (!joystick.IsDown())
+        {
+            if (unit.IsValidTarget(unit.attackTarget))
+                unit.Attacking();
+            else
+                unit.NotAttacking();
+        }
+        else
+            unit.NotAttacking();
+        
         unit.moveDirection = joystick.GetMoveVector();
     }
 

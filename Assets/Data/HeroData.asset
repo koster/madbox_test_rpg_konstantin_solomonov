@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 3206923099687242354, guid: 89de4008f8cc87d4a8e2924ba9d12eb7, type: 3}
   maxHealth: 100
   moveSpeed: 5
-  attackRange: 2
+  attackRange: 2.5
   attackRate: 1
   rotationDamping: 0.25
   height: 2

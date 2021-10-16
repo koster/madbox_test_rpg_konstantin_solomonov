@@ -47,3 +47,4 @@ MonoBehaviour:
   movementSpeedModifier: 1
   attackRadiusModifier: 1
   damage: 10
+  arc: 30
