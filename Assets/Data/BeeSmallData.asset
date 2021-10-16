@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32f4a02bd5d34de7ae79fd94e489a49d, type: 3}
-  m_Name: BeeData
+  m_Name: BeeSmallData
   m_EditorClassIdentifier: 
   prefab: {fileID: 1358921057130329688, guid: 41e04faa14fb7a34e8b16750ec910fc3, type: 3}
-  maxHealth: 100
-  moveSpeed: 3
+  maxHealth: 20
+  moveSpeed: 4
   attackRange: 2
   attackRate: 1
   rotationDamping: 0.1
-  height: 1.9
+  height: 1
   attackAnimation: {fileID: 7400000, guid: 13c807e7b4d48a84e87d7494ff28108b, type: 2}
