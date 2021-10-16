@@ -32,6 +32,7 @@ public class Enemy : MonoBehaviour
     IEnumerator AI()
     {
         var n = 0;
+        var waitForEndOfFrame = new WaitForEndOfFrame();
 
         while (true)
         {
@@ -46,7 +47,7 @@ public class Enemy : MonoBehaviour
                     if (unit.IsDead())
                         yield break;
 
-                    yield return new WaitForEndOfFrame();
+                    yield return waitForEndOfFrame;
                 }
 
                 StopCoroutine(nodeExecution);
