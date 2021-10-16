@@ -544,14 +544,13 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 128
-  equippedWeapon: {fileID: 0}
+  equippedWeapon: {fileID: 4429635130581395359, guid: 817ab0057b636654599f53bd788c975d, type: 3}
   OnKilled:
     m_PersistentCalls:
       m_Calls: []
   OnHurt:
     m_PersistentCalls:
       m_Calls: []
-  canAttack: 0
   isAttacking: 0
 --- !u!1 &3512741108777884559
 GameObject:

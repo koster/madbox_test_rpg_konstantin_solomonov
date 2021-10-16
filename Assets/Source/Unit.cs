@@ -37,23 +37,17 @@ public class Unit : MonoBehaviour
 
     public float CalculateAttackRange()
     {
-        if (equippedWeapon != null)
-            return data.attackRange * equippedWeapon.attackRadiusModifier;
-        return data.attackRange;
+        return data.attackRange * equippedWeapon.attackRadiusModifier;
     }
 
     public float CalculateMoveSpeed()
     {
-        if (equippedWeapon != null)
-            return data.moveSpeed * equippedWeapon.movementSpeedModifier;
-        return data.moveSpeed;
+        return data.moveSpeed * equippedWeapon.movementSpeedModifier;
     }
 
     public float CalculateAttackRate()
     {
-        if (equippedWeapon != null)
-            return data.attackRate * equippedWeapon.attackSpeedModifier;
-        return data.attackRate;
+        return data.attackRate * equippedWeapon.attackSpeedModifier;
     }
 
     public bool IsEquipped(Weapon to)

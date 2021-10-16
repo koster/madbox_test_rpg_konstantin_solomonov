@@ -63,6 +63,7 @@ MonoBehaviour:
   weapon: {fileID: 4429635130581395359, guid: 9cec4bb696ffde741a342d0db5e6aa2c, type: 3}
   unit: {fileID: 8656633749327443888}
   alert: {fileID: 6913796026507029571}
+  engagedTarget: {fileID: 0}
 --- !u!114 &8656633749327443888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,7 +84,7 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 64
-  equippedWeapon: {fileID: 0}
+  equippedWeapon: {fileID: 4429635130581395359, guid: 817ab0057b636654599f53bd788c975d, type: 3}
   OnKilled:
     m_PersistentCalls:
       m_Calls: []
@@ -91,7 +92,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   isAttacking: 0
-  attackCooldown: 0
 --- !u!1 &6913796026507029571
 GameObject:
   m_ObjectHideFlags: 0
