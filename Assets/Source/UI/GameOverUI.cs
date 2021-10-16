@@ -8,6 +8,8 @@ public class GameOverUI : MonoBehaviour
 
     void Start()
     {
+        Main.Get<GameOverSystem>().ui = GetComponent<Canvas>();
+        
         tryAgain.onClick.AddListener(OnClickTryAgain);
     }
 

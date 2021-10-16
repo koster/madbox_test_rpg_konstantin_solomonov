@@ -4,7 +4,6 @@ public class JoystickUI : MonoBehaviour
 {
     public RectTransform innerStick;
     public CanvasGroup canvasGroup;
-    public float radiusPX = 100f;
 
     Vector3 originPoint;
     JoystickInput joystick;
@@ -21,11 +20,16 @@ public class JoystickUI : MonoBehaviour
     {
         if (Main.Get<Player>().unit.IsDead())
             Destroy(gameObject);
-        
+
         if (joystick.IsDown())
         {
             SnapToTouchPoint();
-            innerStick.localPosition = Vector3.Lerp(innerStick.localPosition, -joystick.GetRawVector() * radiusPX, 0.9f);
+
+            var scale_factor = transform.parent.GetComponent<Canvas>().scaleFactor;
+            var pixelPoint = joystick.GetOriginScreenPos() - joystick.GetRawVector() * scale_factor;
+            var rectTrans = innerStick.GetComponent<RectTransform>();
+            var position = ScreenToCanvasPoint(rectTrans, pixelPoint);
+            rectTrans.anchoredPosition = Vector3.Lerp(rectTrans.anchoredPosition, position, 0.9f);
         }
         else
         {
@@ -37,12 +41,18 @@ public class JoystickUI : MonoBehaviour
     void SnapToTouchPoint()
     {
         var rectTrans = GetComponent<RectTransform>();
-        var parent = (RectTransform)rectTrans.parent;
         var centerOffset = new Vector3(Screen.width / 2f, Screen.height / 2f);
-        var screenPoint = joystick.GetOriginScreenPos() + centerOffset;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            parent, screenPoint: screenPoint, null, out var position
-        );
+        var position = ScreenToCanvasPoint(rectTrans, joystick.GetOriginScreenPos() + centerOffset);
         rectTrans.anchoredPosition = position;
+    }
+
+    Vector2 ScreenToCanvasPoint(RectTransform rectTrans, Vector3 point)
+    {
+        var parent = (RectTransform)rectTrans.parent;
+        var screenPoint = point;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parent, screenPoint, null, out var position
+        );
+        return position;
     }
 }

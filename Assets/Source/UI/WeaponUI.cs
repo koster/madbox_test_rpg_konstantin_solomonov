@@ -8,8 +8,9 @@ public class WeaponUI : MonoBehaviour
 
     Weapon shownWeapon;
 
-    void Start()
+    void Awake()
     {
+        GetComponent<Canvas>().worldCamera = Camera.main;
         changeButton.onClick.AddListener(ChangeWeapon);
         Main.Get<GameEvents>().PlayerWeaponChanged.AddListener(ShowPlayerWeapon);
     }

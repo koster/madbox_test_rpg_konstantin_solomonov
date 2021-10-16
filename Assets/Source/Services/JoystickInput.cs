@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class JoystickInput : GameService
 {
-    public float sensitivity = 0.01f;
+    public float pixelRadius = 100f;
     public float motionDamping = 0.9f;
 
     bool isHolding;
-    
+
     Vector3 origin;
     Vector3 vector;
 
@@ -29,8 +29,7 @@ public class JoystickInput : GameService
         if (isHolding)
         {
             var axis = origin - Input.mousePosition;
-            axis = Vector3.ClampMagnitude(axis * sensitivity, 1f);
-
+            axis = Vector3.ClampMagnitude(axis, pixelRadius);
             vector = Vector3.Lerp(vector, axis, motionDamping);
         }
         else
@@ -43,12 +42,13 @@ public class JoystickInput : GameService
     {
         return origin;
     }
-    
+
     public Vector3 GetMoveVector()
     {
-        return new Vector3(vector.x, 0, vector.y);
+        var axisNormalizedToPixelRadius = new Vector3(vector.x / pixelRadius, vector.y / pixelRadius, 0);
+        return new Vector3(axisNormalizedToPixelRadius.x, 0, axisNormalizedToPixelRadius.y);
     }
-    
+
     public Vector3 GetRawVector()
     {
         return vector;
