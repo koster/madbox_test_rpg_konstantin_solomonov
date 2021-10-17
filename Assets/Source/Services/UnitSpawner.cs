@@ -9,8 +9,11 @@ public class UnitSpawner : GameService
     public float width;
     public float height;
 
+    public List<Enemy> allEnemies;
+
     public override void GameStarted()
     {
+        allEnemies = new List<Enemy>();
         for (var i = 0; i < count; i++)
         {
             var randomEnemy = enemies[Random.Range(0, enemies.Count)];
@@ -21,7 +24,9 @@ public class UnitSpawner : GameService
                 Random.Range(-height / 2f, height / 2f)
             );
 
-            Main.Get<GameEvents>().EnemySpawned.Invoke(instance.GetComponent<Enemy>());
+            var enemy = instance.GetComponent<Enemy>();
+            Main.Get<GameEvents>().EnemySpawned.Invoke(enemy);
+            allEnemies.Add(enemy);
         }
     }
 
