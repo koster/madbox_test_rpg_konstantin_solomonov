@@ -13,7 +13,7 @@ public class Main : MonoBehaviour
     void Awake()
     {
         i = this;
-
+        Application.targetFrameRate = 60;
         SceneManager.LoadScene("UI Scene", LoadSceneMode.Additive);
     }
 
