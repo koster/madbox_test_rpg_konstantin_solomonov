@@ -54,7 +54,7 @@ public class Enemy : MonoBehaviour
         var n = 0;
         var waitForEndOfFrame = new WaitForEndOfFrame();
 
-        while (true)
+        while (Main.Get<Player>().unit.IsAlive())
         {
             var node = enemyBehaviour[n % enemyBehaviour.Count];
 
