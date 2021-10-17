@@ -5,19 +5,28 @@ public class VFXSystem : GameService
     public GameObject hitFx;
     public GameObject stepFx;
 
+    VFXPool poolHit;
+    VFXPool poolStep;
+
     public override void GameStarted()
     {
         Main.Get<GameEvents>().DamageDealt.AddListener(OnHurt);
         Main.Get<GameEvents>().PlayerMoved.AddListener(OnMoved);
+
+        poolHit = new VFXPool(hitFx, 2f);
+        poolStep = new VFXPool(stepFx, 2f);
     }
 
     void OnMoved(Vector3 pos)
     {
-        Instantiate(stepFx, pos, Quaternion.identity);
+        var step = poolStep.Get();
+        step.transform.position = pos;
     }
-    
+
     void OnHurt(Vector3 pos, int damage)
     {
-        Instantiate(hitFx, pos, Quaternion.identity).transform.localScale = Vector3.one * (damage / 100f);
+        var hit = poolHit.Get();
+        hit.transform.position = pos;
+        hit.transform.localScale = Vector3.one * damage / 100f;
     }
 }

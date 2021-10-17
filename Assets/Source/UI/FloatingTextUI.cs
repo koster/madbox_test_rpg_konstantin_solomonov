@@ -15,14 +15,16 @@ public class FloatingTextUI : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
+    public void ResetFromPool()
+    {
+        clock = 0f;
+    }
+
     void Update()
     {
         clock += Time.deltaTime;
         canvasGroup.alpha = (lifetime - clock) / lifetime;
 
         transform.position += Vector3.up * floatSpeed * Time.deltaTime;
-
-        if (clock > lifetime)
-            Destroy(gameObject);
     }
 }
