@@ -19,7 +19,9 @@ public class Enemy : MonoBehaviour
     {
         alert.SetActive(false);
 
-        unit.OnKilled.AddListener(OnEnemyKilled);
+        unit.OnKilled.AddListener(OnKilled);
+        unit.OnHurt.AddListener(OnHurt);
+        
         unit.Equip(weapon);
 
         enemyBehaviour = new List<BehaviourNode>();
@@ -29,6 +31,22 @@ public class Enemy : MonoBehaviour
         enemyBehaviour.Add(new EnemyAttack());
 
         StartCoroutine(AI());
+    }
+
+    void OnDestroy()
+    {
+        unit.OnKilled.RemoveListener(OnKilled);
+        unit.OnHurt.RemoveListener(OnHurt);
+    }
+
+    void OnKilled(Unit source)
+    {
+        Main.Get<GameEvents>().EnemyKilled?.Invoke(this);
+    }
+
+    void OnHurt(Unit source)
+    {
+        engagedTarget = source;
     }
 
     IEnumerator AI()
@@ -80,16 +98,6 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
-    }
-
-    void OnDestroy()
-    {
-        unit.OnKilled.RemoveListener(OnEnemyKilled);
-    }
-
-    void OnEnemyKilled()
-    {
-        Main.Get<GameEvents>().EnemyKilled?.Invoke(this);
     }
 }
 
@@ -153,7 +161,8 @@ public class EnemyEngaging : BehaviourNode
 
     protected override IEnumerator Logic(Enemy me)
     {
-        me.engagedTarget = me.unit.attackTarget;
+        if (me.engagedTarget == null)
+            me.engagedTarget = me.unit.attackTarget;
         
         me.unit.moveDirection = Vector3.zero;
         me.unit.facingPoint = me.engagedTarget.transform.position;

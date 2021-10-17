@@ -20,8 +20,8 @@ public class Unit : MonoBehaviour
 
     public Weapon equippedWeapon;
 
-    public UnityEvent OnKilled;
-    public UnityEvent OnHurt;
+    public UnitDamageEvent OnKilled;
+    public UnitDamageEvent OnHurt;
 
     public bool isAttacking;
 
@@ -97,7 +97,7 @@ public class UnitHealth : MonoBehaviour
 {
     public Unit unit;
 
-    public void Hurt(int damage)
+    public void Hurt(Unit who, int damage)
     {
         if (unit.IsDead())
             return;
@@ -107,10 +107,10 @@ public class UnitHealth : MonoBehaviour
         var damagePoint = transform.position + Vector3.up * unit.data.height / 2f;
         Main.Get<GameEvents>().DamageDealt?.Invoke(damagePoint, damage);
 
-        unit.OnHurt?.Invoke();
+        unit.OnHurt?.Invoke(who);
 
         if (unit.health <= 0)
-            unit.OnKilled?.Invoke();
+            unit.OnKilled?.Invoke(who);
     }
 }
 
@@ -154,7 +154,7 @@ public class UnitWeapon : MonoBehaviour
         var distance = delta.magnitude;
 
         if (Mathf.Abs(angle) < unit.equippedWeapon.arc && distance <= unit.CalculateAttackRange())
-            unit.attackTarget.GetComponent<UnitHealth>().Hurt(unit.equippedWeapon.damage);
+            unit.attackTarget.GetComponent<UnitHealth>().Hurt(unit, unit.equippedWeapon.damage);
     }
 
     public void Attacking()
@@ -240,12 +240,12 @@ public class UnitAnimator : MonoBehaviour
         unit.OnKilled.AddListener(UnitKilled);
     }
 
-    void UnitHurt()
+    void UnitHurt(Unit source)
     {
         animator.PlayInFixedTime("Hurt", animator.GetLayerIndex("HurtLayer"), 0);
     }
 
-    void UnitKilled()
+    void UnitKilled(Unit source)
     {
         animator.SetBool("Dead", true);
         animator.SetBool("Attacking", false);
@@ -294,4 +294,9 @@ public class UnitMotor : MonoBehaviour
 
         transform.position += unit.moveDirection * Time.fixedDeltaTime * unit.CalculateMoveSpeed();
     }
+}
+
+[System.Serializable]
+public class UnitDamageEvent : UnityEvent<Unit>
+{
 }
