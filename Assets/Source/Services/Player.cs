@@ -16,8 +16,12 @@ public class Player : GameService
     List<Weapon> weaponsInventory = new List<Weapon>();
     int selectedWeapon;
 
+    Vector3 lastPos;
+
     public override void Init()
     {
+        lastPos = transform.position;
+        
         unit = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         cinemachine.Follow = unit.transform;
 
@@ -52,7 +56,7 @@ public class Player : GameService
         unit.Equip(to);
         Main.Get<GameEvents>().PlayerWeaponChanged?.Invoke(to);
     }
-
+    
     void Update()
     {
         if (unit.IsValidTarget(unit.attackTarget))
@@ -69,8 +73,14 @@ public class Player : GameService
         }
         else
             unit.NotAttacking();
-        
+
         unit.moveDirection = joystick.GetMoveVector();
+
+        if (Vector3.Distance(lastPos, unit.transform.position) > 0.33f)
+        {
+            lastPos = unit.transform.position;
+            Main.Get<GameEvents>().PlayerMoved?.Invoke(lastPos);
+        }
     }
 
     public void NextWeapon()

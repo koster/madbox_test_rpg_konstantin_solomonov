@@ -25,6 +25,11 @@ public class LootPickedUpEvent : UnityEvent<Drop>
 {
 }
 
+[System.Serializable]
+public class PlayerMovedEvent : UnityEvent<Vector3>
+{
+}
+
 public class GameEvents : GameService
 {
     public EnemySpawnedEvent EnemySpawned;
@@ -32,4 +37,5 @@ public class GameEvents : GameService
     public WeaponChangedEvent PlayerWeaponChanged;
     public EnemyKilledEvent EnemyKilled;
     public LootPickedUpEvent LootPickedUp;
+    public PlayerMovedEvent PlayerMoved;
 }
